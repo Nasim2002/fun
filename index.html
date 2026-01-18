@@ -4,118 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For My Favorite Person</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #ff4b6e;
+            --secondary: #ff8fa3;
+            --bg: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+        }
+
         body {
             margin: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            font-family: 'Nunito', sans-serif;
             overflow: hidden;
-            text-align: center;
-            user-select: none; /* Prevents text highlighting while playing */
+            user-select: none;
         }
 
+        /* --- Floating Hearts Background Animation --- */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 2rem;
+            animation: floatUp 10s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Glassmorphism Card --- */
         .container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 90%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 3rem 2.5rem;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            max-width: 420px;
+            width: 85%;
             position: relative;
             z-index: 10;
-            transition: all 0.3s ease;
+            text-align: center;
+            transition: transform 0.3s ease;
         }
 
         h1 {
-            color: #ff4b6e;
+            color: var(--primary);
+            font-size: 2.2rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
-            font-size: 2rem;
-            min-height: 3rem; /* Prevents jumping */
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
         }
 
         p {
             color: #666;
-            margin-bottom: 2rem;
             font-size: 1.2rem;
-            min-height: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+            min-height: 1.6rem;
         }
 
-        .photo-placeholder {
-            width: 120px;
-            height: 120px;
-            background-color: #ffe6ea;
+        /* --- Slideshow Circle --- */
+        .photo-frame {
+            width: 140px;
+            height: 140px;
+            background: white;
             border-radius: 50%;
             margin: 0 auto 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            border: 4px solid #fff;
-            box-shadow: 0 5px 15px rgba(255, 75, 110, 0.2);
+            border: 6px solid #fff;
+            box-shadow: 0 10px 25px rgba(255, 75, 110, 0.25);
             overflow: hidden;
+            position: relative;
         }
 
-        .photo-placeholder img {
+        .photo-frame img, .photo-frame span {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex; /* For emoji centering */
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
         }
 
+        .photo-frame .active {
+            opacity: 1;
+        }
+
+        /* --- Buttons --- */
         .buttons {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            height: 60px; /* Fixed height for stability */
+            gap: 20px;
+            height: 60px;
             position: relative;
             align-items: center;
         }
 
         button {
-            padding: 12px 25px;
+            padding: 14px 32px;
             border: none;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-            min-width: 100px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         #yesBtn {
-            background-color: #ff4b6e;
+            background: linear-gradient(45deg, var(--primary), #ff2e56);
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 75, 110, 0.4);
+            box-shadow: 0 5px 15px rgba(245, 59, 87, 0.4);
             z-index: 2;
         }
 
-        #yesBtn:hover {
-            transform: scale(1.05);
-            background-color: #ff2e56;
-        }
+        #yesBtn:hover { transform: scale(1.05); }
 
         #noBtn {
-            background-color: #e0e0e0;
-            color: #555;
-            transition: transform 0.2s ease, background-color 0.2s;
+            background-color: #fff;
+            color: #888;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             z-index: 1;
         }
 
-        /* Success & Confetti */
-        .hidden { display: none; }
-        
-        #success-message {
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* --- Opening Overlay --- */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            cursor: pointer;
+            transition: opacity 0.8s ease;
         }
 
-        @keyframes popIn {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .envelope {
+            font-size: 5rem;
+            animation: bounce 2s infinite;
         }
 
+        .tap-text {
+            margin-top: 20px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .hidden { display: none !important; }
+        .fade-out { opacity: 0; pointer-events: none; }
+
+        /* Confetti Canvas */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -123,20 +201,34 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 5;
+            z-index: 50;
         }
     </style>
 </head>
 <body>
 
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="bg-hearts" id="hearts-container"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <div class="container" id="main-card">
-        <div class="photo-placeholder" id="photo-container">
-            😍
+    <div id="overlay" onclick="startExperience()">
+        <div class="envelope">💌</div>
+        <div class="tap-text">Tap to Open</div>
+    </div>
+
+    <div class="container hidden" id="main-card">
+        
+        <div class="photo-frame" id="slideshow">
+            <span class="slide active">😍</span>
+            <span class="slide">🥰</span>
+            <span class="slide">💖</span>
+            <span class="slide">✨</span>
         </div>
         
-        <h1 id="question-text">Question goes here</h1>
+        <h1 id="question-text">Question loading...</h1>
         <p id="sub-text">...</p>
         
         <div class="buttons">
@@ -146,147 +238,151 @@
     </div>
 
     <div class="container hidden" id="success-message">
-        <div class="photo-placeholder">🎉</div>
-        <h1>I Knew It!</h1>
-        <p>Love you so much! ❤️</p>
+        <div class="photo-frame">
+            <span class="slide active">🎉</span>
+        </div>
+        <h1>YAY!</h1>
+        <p>Best decision you ever made! <br> I love you! ❤️</p>
     </div>
 
     <script>
-        // --- CONFIGURATION: Add your questions here ---
+        // --- CONFIGURATION ---
         const questions = [
-            {
-                text: "Do you love me?",
-                subtext: "Be honest...",
-                yesText: "Yes!",
-                noText: "No",
-                mode: "static" // Button stays, text changes
-            },
-            {
-                text: "Am I your favorite person?",
-                subtext: "Think carefully...",
-                yesText: "Obviously",
-                noText: "Meh",
-                mode: "static"
-            },
-            {
-                text: "Are you the best girlfriend ever?",
-                subtext: "Last question!",
-                yesText: "100% Yes",
-                noText: "Nope",
-                mode: "runaway" // Button runs away!
-            }
+            { text: "Hey Beautiful...", subtext: "I have a question for you..." },
+            { text: "Do you love me?", subtext: "Be honest now...", yes: "Yes!", no: "No" },
+            { text: "Like, a LOT?", subtext: "More than pizza?", yes: "Duh", no: "Maybe" },
+            { text: "Will you be my Valentine?", subtext: "(Or whatever special occasion this is)", yes: "YES!", no: "Nope", mode: "runaway" }
         ];
 
-        // Funny texts for the "No" button when in 'static' mode
-        const noTexts = ["Are you sure?", "Really?", "Think again!", "Don't do this", "Try again", "💔"];
+        // Funny texts for the "No" button
+        const noTexts = ["Wrong button!", "Are you sure?", "Don't break my heart", "Try again", "💔"];
 
+        // --- LOGIC ---
         let currentStep = 0;
-        const questionEl = document.getElementById('question-text');
-        const subtextEl = document.getElementById('sub-text');
-        const yesBtn = document.getElementById('yesBtn');
-        const noBtn = document.getElementById('noBtn');
+        let slideIndex = 0;
+        
+        const overlay = document.getElementById('overlay');
         const mainCard = document.getElementById('main-card');
-        const successMsg = document.getElementById('success-message');
-        const canvas = document.getElementById('confetti-canvas');
-        const ctx = canvas.getContext('2d');
+        const music = document.getElementById('bg-music');
+        const slideshowContainer = document.getElementById('slideshow');
+        
+        // 1. Start Experience (Play Music)
+        function startExperience() {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                mainCard.classList.remove('hidden');
+                // Try to play music
+                music.volume = 0.3; // 30% volume
+                music.play().catch(e => console.log("Audio requires interaction"));
+            }, 800);
+        }
 
-        // Initialize first question
-        updateQuestion();
+        // 2. Slideshow Logic
+        function showSlides() {
+            const slides = slideshowContainer.getElementsByClassName('slide');
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+            slides[slideIndex - 1].classList.add('active');
+            setTimeout(showSlides, 2000); // Change image every 2 seconds
+        }
+        showSlides(); // Start slideshow
 
+        // 3. Question Logic
         function updateQuestion() {
             const q = questions[currentStep];
-            questionEl.innerText = q.text;
-            subtextEl.innerText = q.subtext;
-            yesBtn.innerText = q.yesText;
-            noBtn.innerText = q.noText;
+            document.getElementById('question-text').innerText = q.text;
+            document.getElementById('sub-text').innerText = q.subtext;
             
-            // Reset No button position and state
+            if(q.yes) document.getElementById('yesBtn').innerText = q.yes;
+            if(q.no) document.getElementById('noBtn').innerText = q.no;
+
+            // Reset 'No' button
+            const noBtn = document.getElementById('noBtn');
             noBtn.style.position = 'static';
             noBtn.style.transform = 'none';
         }
+        updateQuestion();
 
         function handleYes() {
-            // Go to next question
             if (currentStep < questions.length - 1) {
                 currentStep++;
                 updateQuestion();
             } else {
-                // Final success
                 celebrate();
             }
         }
 
         function handleNo() {
             const q = questions[currentStep];
+            const noBtn = document.getElementById('noBtn');
             
-            if (q.mode === 'static') {
-                // Change text to guilt trip
-                const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
-                noBtn.innerText = randomText;
-                
-                // Slight shake animation
-                mainCard.style.transform = "translateX(5px)";
-                setTimeout(() => mainCard.style.transform = "translateX(0)", 100);
-                setTimeout(() => mainCard.style.transform = "translateX(-5px)", 200);
-                setTimeout(() => mainCard.style.transform = "translateX(0)", 300);
+            if (q.mode !== 'runaway') {
+                noBtn.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+                mainCard.style.animation = "shake 0.4s";
+                setTimeout(() => mainCard.style.animation = "", 400);
             }
         }
 
         function handleNoHover() {
-            const q = questions[currentStep];
-            
-            // Only move if we are in 'runaway' mode
-            if (q.mode === 'runaway') {
-                const container = document.querySelector('.container');
-                const x = Math.random() * (container.offsetWidth - noBtn.offsetWidth - 20) - (container.offsetWidth / 2 - 40);
-                const y = Math.random() * (container.offsetHeight - noBtn.offsetHeight - 20) - (container.offsetHeight / 2 - 40);
-
-                noBtn.style.position = 'absolute'; // Make it float now
+            if (questions[currentStep].mode === 'runaway') {
+                const noBtn = document.getElementById('noBtn');
+                const x = Math.random() * (mainCard.offsetWidth - 100) - (mainCard.offsetWidth / 2 - 50);
+                const y = Math.random() * (mainCard.offsetHeight - 50) - (mainCard.offsetHeight / 2 - 25);
+                noBtn.style.position = 'absolute';
                 noBtn.style.transform = `translate(${x}px, ${y}px)`;
             }
         }
 
-        // --- Confetti Logic ---
+        // 4. Background Hearts
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'bg-heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // 5. Celebration
         function celebrate() {
             mainCard.classList.add('hidden');
-            successMsg.classList.remove('hidden');
+            document.getElementById('success-message').classList.remove('hidden');
             startConfetti();
         }
 
-        let confettiParticles = [];
-        
+        // Confetti (Simplified for brevity)
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
         function startConfetti() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
-            for(let i=0; i<100; i++) {
-                confettiParticles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    size: Math.random() * 10 + 5,
-                    speedY: Math.random() * 3 + 2,
-                    speedX: Math.random() * 2 - 1
+            for(let i=0; i<150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`, size: Math.random() * 10 + 5,
+                    speedY: Math.random() * 3 + 2, speedX: Math.random() * 2 - 1
                 });
             }
             animateConfetti();
         }
-
         function animateConfetti() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            confettiParticles.forEach((p) => {
-                p.y += p.speedY;
-                p.x += p.speedX;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-
-                if(p.y > canvas.height) {
-                    p.y = -10;
-                    p.x = Math.random() * canvas.width;
-                }
+            particles.forEach(p => {
+                p.y += p.speedY; p.x += p.speedX;
+                ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size);
+                if(p.y > canvas.height) p.y = -10;
             });
-
             requestAnimationFrame(animateConfetti);
         }
     </script>
